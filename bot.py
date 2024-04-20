@@ -21,20 +21,6 @@ async def on_ready():
     print(f'We have logged in as {bot.user}')
 
 @bot.command()
-async def btc(ctx, id: str = 'bitcoin'):
-    api_url = f'https://api.coincap.io/v2/assets/{id}'
-    response = requests.get(api_url).json()
-    price = response['data']['priceUsd']
-    await ctx.send(f'The current price of {id} is ${price}')
-
-@bot.command()
-async def eth(ctx, id: str = 'ethereum'):
-    api_url = f'https://api.coincap.io/v2/assets/{id}'
-    response = requests.get(api_url).json()
-    price = response['data']['priceUsd']
-    await ctx.send(f'The current price of {id} is ${price}')
-
-@bot.command()
 async def price(ctx, crypto: str):
     id = crypto.lower()  # Convert input to lowercase for consistency
     api_url = f'https://api.coincap.io/v2/assets/{id}'
