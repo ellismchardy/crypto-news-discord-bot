@@ -40,5 +40,39 @@ async def price(ctx, symbol: str):
     else:
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
+@bot.command()
+async def marketcap(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
+    response = requests.get(api_url).json()
+
+    # Check if the response contains valid data
+    if 'data' in response:
+        data = response['data']
+        if data:
+            marketcap = data[0]['marketCapUsd']
+            await ctx.send(f'The current market cap of {symbol.upper()} is ${marketcap}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+    else:
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+
+@bot.command()
+async def tradingvolume(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
+    response = requests.get(api_url).json()
+
+    # Check if the response contains valid data
+    if 'data' in response:
+        data = response['data']
+        if data:
+            tradingvolume = data[0]['volumeUsd24Hr']
+            await ctx.send(f'The trading volume in the last 24 hours of {symbol.upper()} is ${tradingvolume}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+    else:
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+
+
+
 # Run the bot with the specified token
 bot.run(TOKEN)
