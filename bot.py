@@ -25,17 +25,20 @@ async def on_ready():
 
 # Command for getting the price of a cryptocurrency
 @bot.command()
-async def price(ctx, crypto: str):
-    id = crypto.lower()  # Convert input to lowercase for consistency
-    api_url = f'https://api.coincap.io/v2/assets/{id}'
+async def price(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
     response = requests.get(api_url).json()
 
     # Check if the response contains valid data
     if 'data' in response:
-        price = response['data']['priceUsd']
-        await ctx.send(f'The current price of {id} is ${price}')
+        data = response['data']
+        if data:
+            price = data[0]['priceUsd']
+            await ctx.send(f'The current price of {symbol.upper()} is ${price}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
     else:
-        await ctx.send(f"Couldn't find information for {id}.")
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
 # Run the bot with the specified token
 bot.run(TOKEN)
