@@ -128,7 +128,7 @@ async def change(ctx, symbol: str):
         data = response['data']
         if data:
             change = data[0]['changePercent24Hr']
-            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is ${change}')
+            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is {change}')
         else:
             await ctx.send(f"Couldn't find information for {symbol.upper()}.")
     else:
@@ -146,7 +146,7 @@ async def vwap(ctx, symbol: str):
         data = response['data']
         if data:
             vwap = data[0]['vwap24Hr']
-            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is ${vwap}')
+            await ctx.send(f'The VWAP of {symbol.upper()} is ${vwap}')
         else:
             await ctx.send(f"Couldn't find information for {symbol.upper()}.")
     else:
