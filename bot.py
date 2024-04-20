@@ -73,6 +73,36 @@ async def tradingvolume(ctx, symbol: str):
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
 
+@bot.command()
+async def news(ctx, query: str):
+    url = f'https://newsapi.org/v2/everything?q={query}&sortBy=popularity&apiKey=05c15891d7fc45dabaa105cb4432273b'
+    response = requests.get(url)
+    news_data = response.json()
+
+    # Check if the response contains valid data
+    if 'articles' in news_data:
+        articles = news_data['articles'][:5]  # Get only the top 5 articles
+        for article in articles:
+            await ctx.send(f"**{article['title']}**\n{article['url']}")
+    else:
+        await ctx.send(f"No news found for {query}.")
+
+@bot.command()
+async def topheadlines(ctx):
+    url = ('https://newsapi.org/v2/top-headlines?'
+           'country=us&'
+           'apiKey=05c15891d7fc45dabaa105cb4432273b')
+    response = requests.get(url)
+    news_data = response.json()
+
+    # Check if the response contains valid data
+    if 'articles' in news_data:
+        articles = news_data['articles'][:5]  # Get only the top 5 articles
+        for article in articles:
+            await ctx.send(f"**{article['title']}**\n{article['url']}")
+    else:
+        await ctx.send("No headlines found.")
+
 
 # Run the bot with the specified token
 bot.run(TOKEN)
