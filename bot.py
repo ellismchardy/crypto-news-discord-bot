@@ -22,29 +22,30 @@ async def on_ready():
 
 @bot.command()
 async def btc(ctx, id: str = 'bitcoin'):
-    id = 'bitcoin'
     api_url = f'https://api.coincap.io/v2/assets/{id}'
     response = requests.get(api_url).json()
     price = response['data']['priceUsd']
     await ctx.send(f'The current price of {id} is ${price}')
 
 @bot.command()
-async def eth(ctx, id: str = 'bitcoin'):
-    id = 'ethereum'
+async def eth(ctx, id: str = 'ethereum'):
     api_url = f'https://api.coincap.io/v2/assets/{id}'
     response = requests.get(api_url).json()
     price = response['data']['priceUsd']
     await ctx.send(f'The current price of {id} is ${price}')
 
 @bot.command()
-async def crypto(ctx, id: str):
-    id = ctx.command.name
+async def price(ctx, crypto: str):
+    id = crypto.lower()  # Convert input to lowercase for consistency
     api_url = f'https://api.coincap.io/v2/assets/{id}'
     response = requests.get(api_url).json()
-    price = response['data']['priceUsd']
-    await ctx.send(f'The current price of {id} is ${price}')
 
-   
+    # Check if the response contains valid data
+    if 'data' in response:
+        price = response['data']['priceUsd']
+        await ctx.send(f'The current price of {id} is ${price}')
+    else:
+        await ctx.send(f"Couldn't find information for {id}.")
 
 
 
