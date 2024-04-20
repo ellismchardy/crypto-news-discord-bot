@@ -23,8 +23,11 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+
+#CRYPTOCURRENCY COMMANDS
+
 # Command for getting the price of a cryptocurrency
-@bot.command()
+@bot.command(help="Get the current price of a cryptocurrency")
 async def price(ctx, symbol: str):
     api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
     response = requests.get(api_url).json()
@@ -40,7 +43,10 @@ async def price(ctx, symbol: str):
     else:
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
-@bot.command()
+
+
+# Command for getting the market cap of a cryptocurrency
+@bot.command(help="Get the market cap of a cryptocurrency")
 async def marketcap(ctx, symbol: str):
     api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
     response = requests.get(api_url).json()
@@ -56,7 +62,9 @@ async def marketcap(ctx, symbol: str):
     else:
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
-@bot.command()
+
+# Command for getting the 24h trading volume of a cryptocurrency
+@bot.command(help="Get the 24h trading volume of a cryptocurrency")
 async def tradingvolume(ctx, symbol: str):
     api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
     response = requests.get(api_url).json()
@@ -73,7 +81,91 @@ async def tradingvolume(ctx, symbol: str):
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
 
-@bot.command()
+# Command for getting the availabe supply for trading of a cryptocurrency
+@bot.command(help="Get the available supply for trading of a cryptocurrency")
+async def supply(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
+    response = requests.get(api_url).json()
+
+    # Check if the response contains valid data
+    if 'data' in response:
+        data = response['data']
+        if data:
+            supply = data[0]['supply']
+            await ctx.send(f'The available supply for trading of {symbol.upper()} is ${supply}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+    else:
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+
+
+# Command for getting the max supply for trading of a cryptocurrency
+@bot.command(help="Get the max supply for trading of a cryptocurrency")
+async def maxsupply(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
+    response = requests.get(api_url).json()
+
+    # Check if the response contains valid data
+    if 'data' in response:
+        data = response['data']
+        if data:
+            maxsupply = data[0]['maxSupply']
+            await ctx.send(f'The available supply for trading of {symbol.upper()} is ${maxsupply}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+    else:
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+
+
+# Command for getting the 24h change percentage of a cryptocurrency
+@bot.command(help="Get the 24h change percentage of a cryptocurrency")
+async def change(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
+    response = requests.get(api_url).json()
+
+    # Check if the response contains valid data
+    if 'data' in response:
+        data = response['data']
+        if data:
+            change = data[0]['changePercent24Hr']
+            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is ${change}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+    else:
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+
+
+# Command for getting the 24h VWAP of a cryptocurrency
+@bot.command(help="Get the 24h VWAP of a cryptocurrency")
+async def vwap(ctx, symbol: str):
+    api_url = f'https://api.coincap.io/v2/assets?search={symbol}'
+    response = requests.get(api_url).json()
+
+    # Check if the response contains valid data
+    if 'data' in response:
+        data = response['data']
+        if data:
+            vwap = data[0]['vwap24Hr']
+            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is ${vwap}')
+        else:
+            await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+    else:
+        await ctx.send(f"Couldn't find information for {symbol.upper()}.")
+
+
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+
+
+#NEWS COMMANDS
+
+# Command for getting news related on a specific topic - top 5 articles
+@bot.command(help="Get the top 5 news articles related to a specific topic")
 async def news(ctx, *, query: str):
     url = f'https://newsapi.org/v2/everything?q={query}&sortBy=popularity&apiKey=05c15891d7fc45dabaa105cb4432273b'
     response = requests.get(url)
@@ -87,7 +179,9 @@ async def news(ctx, *, query: str):
     else:
         await ctx.send(f"No news found for {query}.")
 
-@bot.command()
+
+# Command for getting news headlines from a specific country - top 5 articles
+@bot.command(help="Get the top 5 news headlines from a specific country")
 async def topheadlines(ctx, query: str):
     url = f'https://newsapi.org/v2/top-headlines?country={query}&apiKey=05c15891d7fc45dabaa105cb4432273b'
     response = requests.get(url)
@@ -100,6 +194,16 @@ async def topheadlines(ctx, query: str):
             await ctx.send(f"**{article['title']}**\n{article['url']}")
     else:
         await ctx.send("No headlines found.")
+
+
+
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
 
 
 # Run the bot with the specified token
