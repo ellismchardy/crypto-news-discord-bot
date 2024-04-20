@@ -36,6 +36,16 @@ async def eth(ctx, id: str = 'bitcoin'):
     price = response['data']['priceUsd']
     await ctx.send(f'The current price of {id} is ${price}')
 
+@bot.command()
+async def crypto(ctx, id: str):
+    id = ctx.command.name
+    api_url = f'https://api.coincap.io/v2/assets/{id}'
+    response = requests.get(api_url).json()
+    price = response['data']['priceUsd']
+    await ctx.send(f'The current price of {id} is ${price}')
+
+   
+
 
 
 
