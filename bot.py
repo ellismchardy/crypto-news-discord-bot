@@ -167,7 +167,7 @@ async def vwap(ctx, symbol: str):
 # Command for getting news related on a specific topic - top 5 articles
 @bot.command(help="Get the top 5 news articles related to a specific topic")
 async def news(ctx, *, query: str):
-    url = f'https://newsapi.org/v2/everything?q={query}&sortBy=popularity&apiKey=05c15891d7fc45dabaa105cb4432273b'
+    url = f'https://newsapi.org/v2/everything?q={query}&apiKey=05c15891d7fc45dabaa105cb4432273b'
     response = requests.get(url)
     news_data = response.json()
 
