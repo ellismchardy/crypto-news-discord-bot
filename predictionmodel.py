@@ -111,7 +111,7 @@ print("Shape of close dataframe:", closedf.shape)
 
 fig = px.line(closedf, x=closedf.Date, y=closedf.Close,labels={'date':'Date','close':'Close Stock'})
 fig.update_traces(marker_line_width=2, opacity=0.8, marker_line_color='orange')
-fig.update_layout(title_text='Whole period of timeframe of Bitcoin close price 2014-2022', plot_bgcolor='white', 
+fig.update_layout(title_text='Whole period of timeframe of Bitcoin close price 2018-2022', plot_bgcolor='white', 
                   font_size=15, font_color='black')
 fig.update_xaxes(showgrid=False)
 fig.update_yaxes(showgrid=False)
@@ -283,7 +283,8 @@ while(i<pred_days):
         x_input = x_input.reshape((1, n_steps, 1))
         
         yhat = model.predict(x_input, verbose=0)
-        #print("{} da        temp_input.extend(yhat[0].tolist())
+        #print("{} day output {}".format(i,yhat))
+        temp_input.extend(yhat[0].tolist())
         temp_input=temp_input[1:]
         #print(temp_input)
        
@@ -300,6 +301,7 @@ while(i<pred_days):
         i=i+1
                
 print("Output of predicted next days: ", len(lst_output))
+
 
 last_days=np.arange(1,time_step+1)
 day_pred=np.arange(time_step+1,time_step+pred_days+1)
@@ -325,7 +327,7 @@ names = cycle(['Last 15 days close price','Predicted next 30 days close price'])
 
 fig = px.line(new_pred_plot,x=new_pred_plot.index, y=[new_pred_plot['last_original_days_value'],
                                                       new_pred_plot['next_predicted_days_value']],
-              labels={'value': 'Stock price','index': 'Days'})
+              labels={'value': 'Stock price','index': 'Timestamp'})
 fig.update_layout(title_text='Compare last 15 days vs next 30 days',
                   plot_bgcolor='white', font_size=15, font_color='black',legend_title_text='Close Price')
 
@@ -335,5 +337,19 @@ fig.update_yaxes(showgrid=False)
 fig.show()
 
 
+lstmdf=closedf.tolist()
+lstmdf.extend((np.array(lst_output).reshape(-1,1)).tolist())
+lstmdf=scaler.inverse_transform(lstmdf).reshape(1,-1).tolist()[0]
 
+names = cycle(['Close price'])
+
+fig = px.line(lstmdf,labels={'value': 'Stock price','index': 'Timestamp'})
+fig.update_layout(title_text='Plotting whole closing stock price with prediction',
+                  plot_bgcolor='white', font_size=15, font_color='black',legend_title_text='Stock')
+
+fig.for_each_trace(lambda t:  t.update(name = next(names)))
+
+fig.update_xaxes(showgrid=False)
+fig.update_yaxes(showgrid=False)
+fig.show()
 
