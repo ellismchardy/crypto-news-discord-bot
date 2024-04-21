@@ -5,6 +5,11 @@ import requests
 from discord.ext import commands
 from discord.ext.commands import MissingRequiredArgument
 
+import openai 
+
+openai.api_key = "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"
+
+
 # Set the discord token
 DISCORD_TOKEN = 'MTIyODc3MDE1Mjg3OTc1NTQwNQ.Guszxa.bzgLo-Yn9MbgrrnghueiJI4-q3XaH-uKqu7Q6E'
 TOKEN = DISCORD_TOKEN
@@ -167,15 +172,22 @@ async def vwap(ctx, symbol: str):
 # Command for getting news related on a specific topic - top 5 articles
 @bot.command(help="Get the top 5 news articles related to a specific topic")
 async def news(ctx, *, query: str):
-    url = f'https://newsapi.org/v2/everything?q={query}&apiKey=05c15891d7fc45dabaa105cb4432273b'
+    url = f'https://newsapi.org/v2/everything?q="{query}"&apiKey=05c15891d7fc45dabaa105cb4432273b'
     response = requests.get(url)
     news_data = response.json()
 
     # Check if the response contains valid data
     if 'articles' in news_data and news_data['articles']:
-        articles = news_data['articles'][:5]  # Get only the top 5 articles
-        for article in articles:
+        articles = news_data['articles'][:1]  # Get only the top 5 articles
+        valid_articles = [article for article in articles if article['title'] != '[Removed]']
+        for article in valid_articles:
             await ctx.send(f"**{article['title']}**\n{article['url']}")
+        response = openai.chat.completions.create(model="gpt-3.5-turbo", messages=[
+            {"role": "system", "content": "You are an expert in analyzing sentiment. You respond with a single word."},
+            {"role": "user", "content": article['content']}
+        ])
+        await ctx.send(f"Sentiment: {response.choices[0].message.content}")
+
     else:
         await ctx.send(f"No news found for {query}.")
 
@@ -187,13 +199,16 @@ async def topheadlines(ctx, query: str):
     response = requests.get(url)
     news_data = response.json()
 
-    # Check if the response contains valid data
+       # Check if the response contains valid data
     if 'articles' in news_data and news_data['articles']:
         articles = news_data['articles'][:5]  # Get only the top 5 articles
-        for article in articles:
+        valid_articles = [article for article in articles if article['title'] != '[Removed]']
+        for article in valid_articles:
             await ctx.send(f"**{article['title']}**\n{article['url']}")
     else:
-        await ctx.send("No headlines found.")
+        await ctx.send(f"No news found for {query}.")
+        
+
 
 
 
