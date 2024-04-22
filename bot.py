@@ -176,6 +176,7 @@ import numpy as np
 import datetime
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+import yfinance as yf
 
 prediction_model = load_model('prediction_model.h5')
 
@@ -190,10 +191,12 @@ def preprocess_data(data):
 @bot.command(help="Predicts the price of Bitcoin for the next day")
 async def predict(ctx):
     # Load your dataset
-    maindf = pd.read_csv('BTC-USD.csv')
+    current_date = datetime.datetime.now().date()
+    start_date = current_date - datetime.timedelta(days=15)
+    btc_data = yf.download('BTC-USD', start=start_date, end=current_date)
 
     # Extract the necessary data for prediction
-    closedf = maindf[['Close']].values
+    closedf = btc_data[['Close']].values
 
     # Preprocess data
     data = closedf[-15:]  
@@ -204,11 +207,10 @@ async def predict(ctx):
     predicted_price = scaler.inverse_transform(prediction.reshape(1, -1))
 
     # Get the date for the next day
-    last_date = maindf['Date'].iloc[-1]
-    next_date = pd.to_datetime(last_date) + pd.DateOffset(days=1)
+    next_date = current_date + datetime.timedelta(days=1)
 
     # Send the prediction and date to Discord
-    await ctx.send(f"Predicted price for {next_date.date()}: {predicted_price[0][0]}")
+    await ctx.send(f"Predicted price for {next_date}: {predicted_price[0][0]}")
 
 
 ################################################################################################################################
