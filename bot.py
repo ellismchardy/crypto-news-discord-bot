@@ -199,7 +199,7 @@ async def predict(ctx):
     closedf = btc_data[['Close']].values
 
     # Preprocess data
-    data = closedf[-15:]  
+    data = closedf 
     preprocessed_data = preprocess_data(data)
 
     # Predict using the model
@@ -210,7 +210,7 @@ async def predict(ctx):
     next_date = current_date + datetime.timedelta(days=1)
 
     # Send the prediction and date to Discord
-    await ctx.send(f"Predicted price for {next_date}: {predicted_price[0][0]}")
+    await ctx.send(f"Predicted price for BTC tomorrow: ${predicted_price[0][0]}")
 
 
 ################################################################################################################################
