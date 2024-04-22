@@ -247,9 +247,9 @@ async def news(ctx, *, query: str):
 
 
 # Command for getting news headlines from a specific country - top 5 articles
-@bot.command(help="Get the top 5 news headlines from a specific country")
-async def topheadlines(ctx, query: str):
-    url = f'https://newsapi.org/v2/top-headlines?country={query}&apiKey=05c15891d7fc45dabaa105cb4432273b'
+@bot.command(help="Get the top 5 news headlines from BBC News")
+async def topheadlines(ctx):
+    url = f'https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=05c15891d7fc45dabaa105cb4432273b'
     response = requests.get(url)
     news_data = response.json()
 
@@ -260,7 +260,7 @@ async def topheadlines(ctx, query: str):
         for article in valid_articles:
             await ctx.send(f"**{article['title']}**\n{article['url']}")
     else:
-        await ctx.send(f"No news found for {query}.")
+        await ctx.send(f"No headlines found.")
 
 
 @bot.command(help="Analyze crypto market sentiment")
