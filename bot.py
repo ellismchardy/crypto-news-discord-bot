@@ -246,7 +246,7 @@ async def news(ctx, *, query: str):
         await ctx.send(f"No news found for {query}.")
 
 
-# Command for getting news headlines from a specific country - top 5 articles
+# Command for getting news headlines from BBC News - top 5 headlines
 @bot.command(help="Get the top 5 news headlines from BBC News")
 async def topheadlines(ctx):
     url = f'https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=05c15891d7fc45dabaa105cb4432273b'
