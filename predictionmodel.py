@@ -54,7 +54,7 @@ print('Ending Date',ed)
 
 #BUILDING THE MODEL
 
-# Lets First Take all the Close Price 
+# Plot the total data for prediction
 closedf = maindf[['Date','Close']]
 print("Shape of close dataframe:", closedf.shape)
 
@@ -139,7 +139,6 @@ plt.figure()
 
 plt.show()
 
-
 #Prediction and Evalution
 
 train_predict=model.predict(X_train)
@@ -150,9 +149,6 @@ train_predict = scaler.inverse_transform(train_predict)
 test_predict = scaler.inverse_transform(test_predict)
 original_ytrain = scaler.inverse_transform(y_train.reshape(-1,1)) 
 original_ytest = scaler.inverse_transform(y_test.reshape(-1,1)) 
-
-# Save the prediction model
-model.save('prediction_model.h5')
 
 
 # Evaluation metrices RMSE and MAE
@@ -175,13 +171,11 @@ print("Train data R2 score:", r2_score(original_ytrain, train_predict))
 print("Test data R2 score:", r2_score(original_ytest, test_predict))
 
 
-
 print("Train data MGD: ", mean_gamma_deviance(original_ytrain, train_predict))
 print("Test data MGD: ", mean_gamma_deviance(original_ytest, test_predict))
 print("----------------------------------------------------------------------")
 print("Train data MPD: ", mean_poisson_deviance(original_ytrain, train_predict))
 print("Test data MPD: ", mean_poisson_deviance(original_ytest, test_predict))
-
 
 # shift train predictions for plotting
 

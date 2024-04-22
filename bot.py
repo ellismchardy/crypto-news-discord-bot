@@ -136,7 +136,7 @@ async def change(ctx, symbol: str):
         data = response['data']
         if data:
             change = data[0]['changePercent24Hr']
-            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is {change}')
+            await ctx.send(f'The change in the last 24 hours of {symbol.upper()} is {float(change):.2f}%')
         else:
             await ctx.send(f"Couldn't find information for {symbol.upper()}.")
     else:
@@ -187,7 +187,7 @@ def preprocess_data(data):
     scaled_data = scaler.fit_transform(data.reshape(-1, 1))
     return scaled_data.reshape(1, -1, 1)
 
-@bot.command()
+@bot.command(help="Predicts the price of Bitcoin for the next day")
 async def predict(ctx):
     # Load your dataset
     maindf = pd.read_csv('BTC-USD.csv')
@@ -261,7 +261,7 @@ async def topheadlines(ctx, query: str):
         await ctx.send(f"No news found for {query}.")
 
 
-@bot.command(help="Analyze market sentiment for a specific topic")
+@bot.command(help="Analyze crypto market sentiment")
 async def marketsentiment(ctx):
     query = "crypto market today"  # Change the query to your desired topic
     url = f'https://newsapi.org/v2/everything?q="{query}"&sortBy=publishedAt&apiKey=05c15891d7fc45dabaa105cb4432273b'
@@ -281,15 +281,6 @@ async def marketsentiment(ctx):
             await ctx.send(f"Sentiment: {response.choices[0].message.content}")
     else:
         await ctx.send(f"No news found for {query}.")
-
-
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
 
 
 # Run the bot with the specified token
