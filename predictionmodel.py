@@ -52,57 +52,6 @@ ed=maindf.iloc[-1][0]
 print('Starting Date',sd)
 print('Ending Date',ed)
 
-
-maindf['Date'] = pd.to_datetime(maindf['Date'], format='%Y-%m-%d')
-
-y_2015 = maindf.loc[(maindf['Date'] >= '2015-04-21')
-                     & (maindf['Date'] < '2024-04-21')]
-
-y_2015 = y_2015.drop(['Adj Close','Volume'], axis=1)
-
-print(y_2015)
-
-monthvise= y_2015.groupby(y_2015['Date'].dt.strftime('%B'))[['Open','Close']].mean()
-new_order = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 
-             'September', 'October', 'November', 'December']
-monthvise = monthvise.reindex(new_order, axis=0)
-print(monthvise)
-
-
-
-fig = go.Figure()
-
-fig.add_trace(go.Bar(
-    x=monthvise.index,
-    y=monthvise['Open'],
-    name='Stock Open Price',
-    marker_color='crimson'
-))
-fig.add_trace(go.Bar(
-    x=monthvise.index,
-    y=monthvise['Close'],
-    name='Stock Close Price',
-    marker_color='lightsalmon'
-))
-
-fig.update_layout(barmode='group', xaxis_tickangle=-45, 
-                  title='Monthwise comparision between Stock open and close price')
-fig.show()
-
-
-
-names = cycle(['Stock Open Price','Stock Close Price','Stock High Price','Stock Low Price'])
-
-fig = px.line(y_2015, x=y_2015.Date, y=[y_2015['Open'], y_2015['Close'], 
-                                          y_2015['High'], y_2015['Low']],
-             labels={'Date': 'Date','value':'Stock value'})
-fig.update_layout(title_text='Stock analysis chart', font_size=15, font_color='black',legend_title_text='Stock Parameters')
-fig.for_each_trace(lambda t:  t.update(name = next(names)))
-fig.update_xaxes(showgrid=False)
-fig.update_yaxes(showgrid=False)
-
-fig.show()
-
 #BUILDING THE MODEL
 
 # Lets First Take all the Close Price 
@@ -201,6 +150,10 @@ train_predict = scaler.inverse_transform(train_predict)
 test_predict = scaler.inverse_transform(test_predict)
 original_ytrain = scaler.inverse_transform(y_train.reshape(-1,1)) 
 original_ytest = scaler.inverse_transform(y_test.reshape(-1,1)) 
+
+# Save the prediction model
+model.save('prediction_model.h5')
+
 
 # Evaluation metrices RMSE and MAE
 print("Train data RMSE: ", math.sqrt(mean_squared_error(original_ytrain,train_predict)))
@@ -353,3 +306,4 @@ fig.update_xaxes(showgrid=False)
 fig.update_yaxes(showgrid=False)
 fig.show()
 
+model.save('prediction_model.h5')

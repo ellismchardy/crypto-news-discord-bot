@@ -5,7 +5,10 @@ import requests
 from discord.ext import commands
 from discord.ext.commands import MissingRequiredArgument
 
+from keras.models import load_model
+
 import openai 
+
 
 openai.api_key = "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"
 
@@ -158,6 +161,56 @@ async def vwap(ctx, symbol: str):
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
 
+
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+################################################################################################################################
+
+#Prediction 
+
+import numpy as np
+import datetime
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+prediction_model = load_model('prediction_model.h5')
+
+# Load the scaler
+scaler = MinMaxScaler(feature_range=(0,1))
+
+# Function to preprocess input data
+def preprocess_data(data):
+    scaled_data = scaler.fit_transform(data.reshape(-1, 1))
+    return scaled_data.reshape(1, -1, 1)
+
+@bot.command()
+async def predict(ctx):
+    # Load your dataset
+    maindf = pd.read_csv('BTC-USD.csv')
+
+    # Extract the necessary data for prediction
+    closedf = maindf[['Close']].values
+
+    # Preprocess data
+    data = closedf[-15:]  
+    preprocessed_data = preprocess_data(data)
+
+    # Predict using the model
+    prediction = prediction_model.predict(preprocessed_data)
+    predicted_price = scaler.inverse_transform(prediction.reshape(1, -1))
+
+    # Get the date for the next day
+    last_date = maindf['Date'].iloc[-1]
+    next_date = pd.to_datetime(last_date) + pd.DateOffset(days=1)
+
+    # Send the prediction and date to Discord
+    await ctx.send(f"Predicted price for {next_date.date()}: {predicted_price[0][0]}")
+
+
 ################################################################################################################################
 ################################################################################################################################
 ################################################################################################################################
@@ -172,22 +225,21 @@ async def vwap(ctx, symbol: str):
 # Command for getting news related on a specific topic - top 5 articles
 @bot.command(help="Get the top 5 news articles related to a specific topic")
 async def news(ctx, *, query: str):
-    url = f'https://newsapi.org/v2/everything?q="{query}"&apiKey=05c15891d7fc45dabaa105cb4432273b'
+    url = f'https://newsapi.org/v2/everything?q="{query}"&sortBy=publishedAt&apiKey=05c15891d7fc45dabaa105cb4432273b'
     response = requests.get(url)
     news_data = response.json()
 
     # Check if the response contains valid data
     if 'articles' in news_data and news_data['articles']:
-        articles = news_data['articles'][:1]  # Get only the top 5 articles
+        articles = news_data['articles'][:5]  # Get only the top 5 articles
         valid_articles = [article for article in articles if article['title'] != '[Removed]']
         for article in valid_articles:
             await ctx.send(f"**{article['title']}**\n{article['url']}")
-        response = openai.chat.completions.create(model="gpt-3.5-turbo", messages=[
-            {"role": "system", "content": "You are an expert in analyzing sentiment. You respond with a single word."},
-            {"role": "user", "content": article['content']}
-        ])
-        await ctx.send(f"Sentiment: {response.choices[0].message.content}")
-
+            response = openai.chat.completions.create(model="gpt-3.5-turbo", messages=[
+                {"role": "system", "content": "You are an expert in analyzing sentiment. You respond with either Positive, Negative, or Neutral."},
+                {"role": "user", "content": article['content']}
+            ])
+            await ctx.send(f"Sentiment: {response.choices[0].message.content}")
     else:
         await ctx.send(f"No news found for {query}.")
 
@@ -207,9 +259,28 @@ async def topheadlines(ctx, query: str):
             await ctx.send(f"**{article['title']}**\n{article['url']}")
     else:
         await ctx.send(f"No news found for {query}.")
-        
 
 
+@bot.command(help="Analyze market sentiment for a specific topic")
+async def marketsentiment(ctx):
+    query = "crypto market today"  # Change the query to your desired topic
+    url = f'https://newsapi.org/v2/everything?q="{query}"&sortBy=publishedAt&apiKey=05c15891d7fc45dabaa105cb4432273b'
+    response = requests.get(url)
+    news_data = response.json()
+
+    # Check if the response contains valid data
+    if 'articles' in news_data and news_data['articles']:
+        articles = news_data['articles'][:5]  # Get only the top 5 articles
+        valid_articles = [article for article in articles if article['title'] != '[Removed]']
+        for article in valid_articles:
+            await ctx.send(f"**{article['title']}**\n{article['url']}")
+            response = openai.chat.completions.create(model="gpt-3.5-turbo", messages=[
+                {"role": "system", "content": "You are an expert in analyzing market sentiment. Analyse the market sentiment."},
+                {"role": "user", "content": article['content']}
+            ])
+            await ctx.send(f"Sentiment: {response.choices[0].message.content}")
+    else:
+        await ctx.send(f"No news found for {query}.")
 
 
 ################################################################################################################################
