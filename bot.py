@@ -31,7 +31,6 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-
 #CRYPTOCURRENCY COMMANDS
 
 # Command for getting the price of a cryptocurrency
@@ -190,27 +189,31 @@ def preprocess_data(data):
 
 @bot.command(help="Predicts the price of Bitcoin for the next day")
 async def predict(ctx):
-    # Load your dataset
-    current_date = datetime.datetime.now().date()
-    start_date = current_date - datetime.timedelta(days=15)
-    btc_data = yf.download('BTC-USD', start=start_date, end=current_date)
+    try:
+        # Load your dataset
+        current_date = datetime.datetime.now().date()
+        start_date = current_date - datetime.timedelta(days=15)
+        btc_data = yf.download('BTC-USD', start=start_date, end=current_date)
 
-    # Extract the necessary data for prediction
-    closedf = btc_data[['Close']].values
+        # Extract the necessary data for prediction
+        closedf = btc_data[['Close']].values
 
-    # Preprocess data
-    data = closedf 
-    preprocessed_data = preprocess_data(data)
+        # Preprocess data
+        data = closedf 
+        preprocessed_data = preprocess_data(data)
 
-    # Predict using the model
-    prediction = prediction_model.predict(preprocessed_data)
-    predicted_price = scaler.inverse_transform(prediction.reshape(1, -1))
+        # Predict using the model
+        prediction = prediction_model.predict(preprocessed_data)
+        predicted_price = scaler.inverse_transform(prediction.reshape(1, -1))
 
-    # Get the date for the next day
-    next_date = current_date + datetime.timedelta(days=1)
+        # Get the date for the next day
+        next_date = current_date + datetime.timedelta(days=1)
 
-    # Send the prediction and date to Discord
-    await ctx.send(f"Predicted price for BTC tomorrow: ${predicted_price[0][0]}")
+        # Send the prediction and date to Discord
+        await ctx.send(f"Predicted price for BTC tomorrow: ${predicted_price[0][0]}")
+    except Exception as e:
+        await ctx.send(f"Error predicting price: {str(e)}")
+
 
 
 ################################################################################################################################
@@ -262,7 +265,7 @@ async def topheadlines(ctx):
     else:
         await ctx.send(f"No headlines found.")
 
-
+# Command for analysing crypto market sentiment - uses top 5 news articles related to 'crypto market today'
 @bot.command(help="Analyze crypto market sentiment")
 async def marketsentiment(ctx):
     query = "crypto market today"  # Change the query to your desired topic
