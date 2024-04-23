@@ -9,12 +9,12 @@ from keras.models import load_model
 
 import openai 
 
-
+#Set the OpenAI API key
 openai.api_key = "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"
 
-
 # Set the discord token
-DISCORD_TOKEN = 'MTIyODc3MDE1Mjg3OTc1NTQwNQ.Guszxa.bzgLo-Yn9MbgrrnghueiJI4-q3XaH-uKqu7Q6E'
+load_dotenv()
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 TOKEN = DISCORD_TOKEN
 
 # Set up Discord intents
@@ -176,6 +176,7 @@ import datetime
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import yfinance as yf
+from dotenv import load_dotenv
 
 prediction_model = load_model('prediction_model.h5')
 
