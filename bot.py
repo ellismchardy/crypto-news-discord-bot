@@ -1,3 +1,4 @@
+#General/Discord Imports 
 import os
 import discord
 from dotenv import load_dotenv
@@ -5,17 +6,24 @@ import requests
 from discord.ext import commands
 from discord.ext.commands import MissingRequiredArgument
 
+#Prediction Imports
+import numpy as np
+import datetime
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import yfinance as yf
+from dotenv import load_dotenv
 from keras.models import load_model
 
 import openai 
 
+load_dotenv()
+
 #Set the OpenAI API key
-openai.api_key = "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"
+openai.api_key = os.getenv('GPT_KEY')
 
 # Set the discord token
-load_dotenv()
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
-TOKEN = DISCORD_TOKEN
+TOKEN = os.getenv('DISCORD_TOKEN')
 
 # Set up Discord intents
 intents = discord.Intents.default()
@@ -49,7 +57,6 @@ async def price(ctx, symbol: str):
             await ctx.send(f"Couldn't find information for {symbol.upper()}.")
     else:
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
-
 
 
 # Command for getting the market cap of a cryptocurrency
@@ -160,23 +167,7 @@ async def vwap(ctx, symbol: str):
         await ctx.send(f"Couldn't find information for {symbol.upper()}.")
 
 
-
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-
 #Prediction 
-
-import numpy as np
-import datetime
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-import yfinance as yf
-from dotenv import load_dotenv
 
 prediction_model = load_model('prediction_model.h5')
 
@@ -202,6 +193,9 @@ async def predict(ctx):
         # Preprocess data
         data = closedf 
         preprocessed_data = preprocess_data(data)
+        
+        for i in closedf:
+            print(i)
 
         # Predict using the model
         prediction = prediction_model.predict(preprocessed_data)
@@ -214,16 +208,6 @@ async def predict(ctx):
         await ctx.send(f"Predicted price for BTC tomorrow: ${predicted_price[0][0]}")
     except Exception as e:
         await ctx.send(f"Error predicting price: {str(e)}")
-
-
-
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
-################################################################################################################################
 
 
 #NEWS COMMANDS
