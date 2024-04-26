@@ -5,10 +5,10 @@ Installation
 
 To use this bot, you need to follow these steps:
 
-    Clone this repository to your local machine.
-    Install the required dependencies listed in the requirements.txt file by running:
+Clone this repository to your local machine.
+Install the required dependencies listed in the requirements.txt file by running:
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
 Create a .env file in the root directory of the project and define the following environment variables:
 
@@ -17,12 +17,11 @@ Create a .env file in the root directory of the project and define the following
 
     Replace <your_discord_token> with your Discord bot token and <your_openai_gpt_key> with your OpenAI GPT API key.
     
-
 Usage
 
 Once you have set up the bot and installed the dependencies, you can run the bot using the following command:
 
-python bot.py
+    python bot.py
 
 Commands
 Cryptocurrency Commands
@@ -41,7 +40,7 @@ Prediction Command
 
 News Commands
 
-    !news <query>: Get the top 5 news articles related to a specific topic.
+    !news <query>: Get the top 5 news articles related to a specific topic and categorizes sentiment: positive, negative, or neutral.
     !topheadlines: Get the top 5 news headlines from BBC News.
     !marketsentiment: Analyze crypto market sentiment using the top 5 news articles related to 'crypto market today'.
 
